@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-
 import {IERP} from "./IERP.sol";
 import {IERPHook} from "./IERPHook.sol";
 
 // Ethereum Referral Protocol - By Quinn, Jack and John
 
-contract ERP is IERP, ERC721 {
+contract ERP is IERP {
     uint256 private _totalPrograms;
 
     // Program ID => Referral program
     mapping(uint256 => ReferralProgram) private _programs;
 
-    constructor() ERC721("Ethereum Referral Protocol", "ERP") {}
+    constructor() {}
 
-    function getReferralProgram(uint256 programId) external view override returns (address[] memory) {
+    function getReferralProgram(
+        uint256 programId
+    ) external view override returns (address[] memory) {
         return _programs[programId].hooks;
     }
 
@@ -35,7 +35,6 @@ contract ERP is IERP, ERC721 {
     }
 
     function newReferralProgram(
-        address to,
         address[] memory hooks
     ) external override returns (uint256 programId) {
         programId = _totalPrograms;
@@ -43,9 +42,7 @@ contract ERP is IERP, ERC721 {
 
         _programs[programId].hooks = hooks;
 
-        _safeMint(to, programId);
-
-        emit NewReferralProgram(to, programId, hooks);
+        emit NewReferralProgram(programId, hooks);
     }
 
     function setReferral(
